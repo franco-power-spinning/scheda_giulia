@@ -448,55 +448,40 @@
         /* Stili per le notifiche motivazionali */
         .motivational-notification {
             position: fixed;
-            bottom: -100px;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%) scale(0.8);
+            transform: translate(-50%, -50%) scale(0.8);
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            padding: 15px 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
             opacity: 0;
             transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             max-width: 90%;
             text-align: center;
             border: 2px solid rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(5px);
+            width: auto;
+            min-width: 250px;
+            pointer-events: none;
         }
 
         .motivational-notification.show {
-            bottom: 20px;
             opacity: 1;
-            transform: translateX(-50%) scale(1);
+            transform: translate(-50%, -50%) scale(1);
             animation: pulse 2s infinite;
         }
 
         .notification-content {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
             position: relative;
             overflow: hidden;
-        }
-
-        .notification-content p {
-            margin: 0;
-            padding: 0;
-            position: relative;
-            animation: slideIn 0.5s ease-out;
-        }
-
-        .notification-content::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transform: translateX(-100%);
-            animation: shine 3s infinite;
+            padding: 10px;
+            white-space: nowrap;
         }
 
         @keyframes pulse {
@@ -511,33 +496,24 @@
             }
         }
 
-        @keyframes slideIn {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes shine {
-            0% {
-                transform: translateX(-100%);
-            }
-            50% {
-                transform: translateX(100%);
-            }
-            100% {
-                transform: translateX(100%);
-            }
-        }
-
         @media (max-width: 768px) {
             .motivational-notification {
-                width: 90%;
+                padding: 15px 25px;
+                min-width: 200px;
+                max-width: 80%;
+            }
+
+            .notification-content {
+                font-size: 18px;
+                white-space: normal;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .motivational-notification {
                 padding: 12px 20px;
+                min-width: 180px;
+                max-width: 85%;
             }
 
             .notification-content {

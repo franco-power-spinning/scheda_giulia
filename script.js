@@ -62,7 +62,7 @@ const motivationalQuotes = [
     "🌟 Ogni ripetizione ti avvicina al tuo obiettivo!",
     "⚡ La tua determinazione è la tua arma più potente!",
     "💪 Non esiste limite a ciò che puoi raggiungere!",
-    "🤔 Dove è Gesù? 🤔"
+    "🔥 Dove è Gesù? 🤔"
 ];
 
 // Function to load workout data
@@ -428,6 +428,12 @@ function loadExercisePhoto(exerciseId) {
 function showMotivationalNotification() {
     const quote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
     
+    // Rimuovi eventuali notifiche precedenti
+    const existingNotification = document.querySelector('.motivational-notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+    
     const notification = document.createElement('div');
     notification.className = 'motivational-notification';
     notification.innerHTML = `
@@ -436,7 +442,11 @@ function showMotivationalNotification() {
         </div>
     `;
     
+    // Aggiungi la notifica direttamente al body
     document.body.appendChild(notification);
+    
+    // Forza il reflow per assicurare che l'animazione funzioni
+    notification.offsetHeight;
     
     // Animazione di entrata
     setTimeout(() => {
@@ -447,12 +457,12 @@ function showMotivationalNotification() {
     setTimeout(() => {
         notification.classList.remove('show');
         setTimeout(() => {
-            document.body.removeChild(notification);
+            notification.remove();
         }, 500);
     }, 3000);
 }
 
-// Modifica la funzione saveExerciseData per includere la notifica
+// Funzione per salvare i dati dell'esercizio
 function saveExerciseData(exerciseId) {
     const weight = document.getElementById(`weight-${exerciseId}`).value;
     const reps = document.getElementById(`reps-${exerciseId}`).value;
