@@ -1,5 +1,38 @@
 let currentWorkout = null;
 let workoutData = {
+    "client": {
+        "name": "Giulia",
+        "startDate": "2024-03-20"
+    },
+    "style": {
+        "theme": "light",
+        "colors": {
+            "primary": "#E91E63",
+            "secondary": "#C2185B",
+            "accent": "#FF80AB",
+            "text": "#4A4A4A",
+            "background": "#FFF5F7",
+            "surface": "#FFFFFF",
+            "error": "#F48FB1",
+            "success": "#81C784"
+        },
+        "typography": {
+            "fontFamily": "'Playfair Display', 'Cormorant Garamond', serif",
+            "baseSize": "16px",
+            "headingSize": "28px",
+            "subheadingSize": "22px"
+        },
+        "spacing": {
+            "small": "8px",
+            "medium": "16px",
+            "large": "24px"
+        },
+        "borderRadius": {
+            "small": "6px",
+            "medium": "12px",
+            "large": "20px"
+        }
+    },
     "workouts": [
         {
             "id": "workout-a",
@@ -8,19 +41,67 @@ let workoutData = {
             "exercises": [
                 {
                     "id": 1,
-                    "name": "Panca Piana",
-                    "sets": 4,
-                    "repetitions": 12,
-                    "restTime": "90 secondi",
-                    "notes": "Mantenere la schiena aderente alla panca"
+                    "name": "Pulldown alla Lat machine",
+                    "sets": 3,
+                    "repetitions": 8,
+                    "restTime": "60 secondi",
+                    "notes": "Mantenere la schiena dritta e controllare la fase eccentrica"
                 },
                 {
                     "id": 2,
-                    "name": "Trazioni",
+                    "name": "Rematore Bilanciere",
                     "sets": 3,
                     "repetitions": 8,
-                    "restTime": "120 secondi",
-                    "notes": "Mantenere il corpo dritto"
+                    "restTime": "60 secondi",
+                    "notes": "Mantenere la schiena dritta e le spalle basse"
+                },
+                {
+                    "id": 3,
+                    "name": "Pulley",
+                    "sets": 3,
+                    "repetitions": 8,
+                    "restTime": "60 secondi",
+                    "notes": "Controllare il movimento e mantenere la postura corretta"
+                },
+                {
+                    "id": 4,
+                    "name": "Rematore con manubrio",
+                    "sets": 3,
+                    "repetitions": 8,
+                    "restTime": "60 secondi",
+                    "notes": "Mantenere il gomito vicino al corpo"
+                },
+                {
+                    "id": 5,
+                    "name": "Military press",
+                    "sets": 3,
+                    "repetitions": 8,
+                    "restTime": "60 secondi",
+                    "notes": "Mantenere il core attivo e controllare il movimento"
+                },
+                {
+                    "id": 6,
+                    "name": "Alzate laterali con manubrio sdraiati su panca inclinata",
+                    "sets": 3,
+                    "repetitions": 8,
+                    "restTime": "60 secondi",
+                    "notes": "3 serie per lato, mantenere il controllo del movimento"
+                },
+                {
+                    "id": 7,
+                    "name": "Alzate con manubri con busto appoggiato su panca inclinata",
+                    "sets": 3,
+                    "repetitions": 8,
+                    "restTime": "60 secondi",
+                    "notes": "Mantenere la postura corretta e controllare il movimento"
+                },
+                {
+                    "id": 8,
+                    "name": "Tirate al mento (bilancere piccolo)",
+                    "sets": 3,
+                    "repetitions": 8,
+                    "restTime": "60 secondi",
+                    "notes": "Mantenere i gomiti alti e controllare il movimento"
                 }
             ]
         },
@@ -68,7 +149,22 @@ const motivationalQuotes = [
 // Function to load workout data
 function loadWorkoutData() {
     try {
-        console.log('Workout data:', workoutData); // Debug log
+        // Aggiorna il nome del cliente
+        document.getElementById('client-name').textContent = workoutData.client.name;
+        
+        // Aggiorna la data di inizio
+        const startDate = new Date(workoutData.client.startDate);
+        const formattedDate = startDate.toLocaleDateString('it-IT', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+        document.getElementById('workout-date').textContent = `Inizio allenamento: ${formattedDate}`;
+        
+        // Applica gli stili
+        applyStyles();
+        
+        console.log('Workout data:', workoutData);
         createWorkoutTabs();
     } catch (error) {
         console.error('Error loading workout data:', error);
@@ -112,7 +208,7 @@ function createWorkoutTabs() {
         const photoSection = document.createElement('div');
         photoSection.className = 'photo-section';
         photoSection.innerHTML = `
-            <h2>Foto Iniziale Allenamento</h2>
+            <h2>Tieni traccia dei tuoi progressi</h2>
             <div class="photo-container" id="photo-container-${workout.id}">
                 <div class="photo-placeholder">
                     <p>+ Clicca per aggiungere foto</p>
@@ -191,6 +287,16 @@ function loadWorkoutExercises(workoutId) {
     workout.exercises.forEach(exercise => {
         const exerciseElement = document.createElement('div');
         exerciseElement.className = 'exercise';
+        
+        // Controlla se l'esercizio è stato completato oggi
+        const history = JSON.parse(localStorage.getItem(`exercise-${exercise.id}`) || '[]');
+        const today = new Date().toLocaleDateString('it-IT');
+        const isCompletedToday = history.some(entry => entry.date === today);
+        
+        if (isCompletedToday) {
+            exerciseElement.classList.add('completed-today');
+        }
+        
         exerciseElement.innerHTML = `
             <div class="exercise-header">
                 <h2>${exercise.name}</h2>
@@ -483,6 +589,12 @@ function saveExerciseData(exerciseId) {
     history.push(exerciseData);
     localStorage.setItem(`exercise-${exerciseId}`, JSON.stringify(history));
     
+    // Aggiorna lo stato dell'esercizio
+    const exerciseElement = document.querySelector(`#workout-container-${currentWorkout.id} .exercise:nth-child(${exerciseId})`);
+    if (exerciseElement) {
+        exerciseElement.classList.add('completed-today');
+    }
+    
     loadExerciseHistory(exerciseId);
     
     document.getElementById(`weight-${exerciseId}`).value = '';
@@ -674,6 +786,148 @@ function loadWorkoutDataFromFile(file) {
         }
     };
     reader.readAsText(file);
+}
+
+// Funzione per resettare la configurazione del workout
+function resetWorkout() {
+    if (confirm('Sei sicuro di voler resettare la configurazione? Tutti i dati verranno eliminati.')) {
+        // Resetta i dati del workout
+        workoutData = {
+            "client": {
+                "name": "Giulia",
+                "startDate": new Date().toISOString().split('T')[0]
+            },
+            "style": {
+                "theme": "light",
+                "colors": {
+                    "primary": "#2196F3",
+                    "secondary": "#1976D2",
+                    "accent": "#FFC107",
+                    "text": "#333333",
+                    "background": "#f5f5f5",
+                    "surface": "#ffffff",
+                    "error": "#f44336",
+                    "success": "#4CAF50"
+                },
+                "typography": {
+                    "fontFamily": "'Roboto', sans-serif",
+                    "baseSize": "16px",
+                    "headingSize": "24px",
+                    "subheadingSize": "20px"
+                },
+                "spacing": {
+                    "small": "8px",
+                    "medium": "16px",
+                    "large": "24px"
+                },
+                "borderRadius": {
+                    "small": "4px",
+                    "medium": "8px",
+                    "large": "15px"
+                }
+            },
+            "workouts": [
+                {
+                    "id": "workout-a",
+                    "name": "Allenamento A",
+                    "description": "Allenamento per la parte superiore del corpo",
+                    "exercises": []
+                }
+            ]
+        };
+
+        // Pulisci il localStorage
+        localStorage.clear();
+
+        // Ricarica l'interfaccia
+        loadWorkoutData();
+
+        // Mostra un messaggio di conferma
+        const notification = document.createElement('div');
+        notification.className = 'motivational-notification';
+        notification.innerHTML = `
+            <div class="notification-content">
+                <p>✅ Configurazione resettata con successo!</p>
+            </div>
+        `;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 100);
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 500);
+        }, 3000);
+    }
+}
+
+// Funzione per applicare gli stili
+function applyStyles() {
+    const style = workoutData.style;
+    const root = document.documentElement;
+
+    // Applica i colori
+    root.style.setProperty('--primary-color', style.colors.primary);
+    root.style.setProperty('--secondary-color', style.colors.secondary);
+    root.style.setProperty('--accent-color', style.colors.accent);
+    root.style.setProperty('--text-color', style.colors.text);
+    root.style.setProperty('--light-gray', style.colors.background);
+    root.style.setProperty('--white', style.colors.surface);
+
+    // Applica la tipografia
+    root.style.setProperty('--font-family', style.typography.fontFamily);
+    root.style.setProperty('--base-size', style.typography.baseSize);
+    root.style.setProperty('--heading-size', style.typography.headingSize);
+    root.style.setProperty('--subheading-size', style.typography.subheadingSize);
+
+    // Applica lo spacing
+    root.style.setProperty('--spacing-small', style.spacing.small);
+    root.style.setProperty('--spacing-medium', style.spacing.medium);
+    root.style.setProperty('--spacing-large', style.spacing.large);
+
+    // Applica i border radius
+    root.style.setProperty('--border-radius-small', style.borderRadius.small);
+    root.style.setProperty('--border-radius-medium', style.borderRadius.medium);
+    root.style.setProperty('--border-radius-large', style.borderRadius.large);
+
+    // Applica il tema
+    document.body.className = style.theme;
+}
+
+// Funzione per cambiare tema
+function toggleTheme() {
+    workoutData.style.theme = workoutData.style.theme === 'light' ? 'dark' : 'light';
+    
+    if (workoutData.style.theme === 'dark') {
+        workoutData.style.colors = {
+            "primary": "#90CAF9",
+            "secondary": "#64B5F6",
+            "accent": "#FFD54F",
+            "text": "#FFFFFF",
+            "background": "#121212",
+            "surface": "#1E1E1E",
+            "error": "#EF5350",
+            "success": "#66BB6A"
+        };
+    } else {
+        workoutData.style.colors = {
+            "primary": "#2196F3",
+            "secondary": "#1976D2",
+            "accent": "#FFC107",
+            "text": "#333333",
+            "background": "#f5f5f5",
+            "surface": "#ffffff",
+            "error": "#f44336",
+            "success": "#4CAF50"
+        };
+    }
+    
+    applyStyles();
+    saveWorkoutData();
 }
 
 // Initialize the application

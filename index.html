@@ -4,15 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scheda di Allenamento</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #2196F3;
-            --secondary-color: #1976D2;
-            --accent-color: #FFC107;
-            --text-color: #333;
-            --light-gray: #f5f5f5;
-            --white: #ffffff;
+            --primary-color: #E91E63;
+            --secondary-color: #C2185B;
+            --accent-color: #FF80AB;
+            --text-color: #4A4A4A;
+            --light-gray: #FFF5F7;
+            --white: #FFFFFF;
+            --font-family: 'Playfair Display', 'Cormorant Garamond', serif;
+            --base-size: 16px;
+            --heading-size: 28px;
+            --subheading-size: 22px;
+            --spacing-small: 8px;
+            --spacing-medium: 16px;
+            --spacing-large: 24px;
+            --border-radius-small: 6px;
+            --border-radius-medium: 12px;
+            --border-radius-large: 20px;
         }
 
         * {
@@ -22,25 +32,39 @@
         }
 
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: var(--font-family);
             background-color: var(--light-gray);
             color: var(--text-color);
             line-height: 1.6;
+            font-size: var(--base-size);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        body.dark {
+            background-color: #121212;
+            color: #ffffff;
         }
 
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 20px;
+            padding: var(--spacing-large);
         }
 
         .header {
-            background-color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: var(--white);
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: var(--spacing-large);
+            border-radius: var(--border-radius-large);
+            margin-bottom: var(--spacing-large);
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.2);
+        }
+
+        .header h1 {
+            font-size: var(--heading-size);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: var(--spacing-small);
         }
 
         .client-info {
@@ -60,7 +84,7 @@
             height: 200px;
             margin: 0 auto;
             border: 2px dashed var(--primary-color);
-            border-radius: 8px;
+            border-radius: var(--border-radius-large);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -78,6 +102,7 @@
         .photo-placeholder {
             text-align: center;
             color: var(--primary-color);
+            font-style: italic;
         }
 
         .photo-options {
@@ -102,15 +127,55 @@
 
         .exercise {
             background-color: var(--white);
-            border-radius: 8px;
-            margin-bottom: 30px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
+            border-radius: var(--border-radius-large);
+            margin-bottom: var(--spacing-large);
+            padding: var(--spacing-large);
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(233, 30, 99, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exercise.completed-today {
+            background: linear-gradient(135deg, var(--white), #FFF5F7);
+            border: 2px solid var(--success);
+            box-shadow: 0 4px 15px rgba(129, 199, 132, 0.2);
+        }
+
+        .exercise.completed-today::before {
+            content: '✓';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background-color: var(--success);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .exercise.completed-today .exercise-header h2 {
+            color: var(--success);
+        }
+
+        .exercise.completed-today .info-card {
+            background-color: rgba(129, 199, 132, 0.1);
+            border-color: var(--success);
         }
 
         .exercise:hover {
             transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(233, 30, 99, 0.15);
+        }
+
+        .exercise.completed-today:hover {
+            box-shadow: 0 6px 20px rgba(129, 199, 132, 0.2);
         }
 
         .exercise-header {
@@ -120,13 +185,20 @@
             margin-bottom: 15px;
         }
 
+        .exercise-header h2 {
+            font-size: var(--subheading-size);
+            color: var(--primary-color);
+            font-weight: 500;
+            margin-bottom: var(--spacing-medium);
+        }
+
         .exercise-photo {
             width: 100%;
             max-width: 300px;
             height: 200px;
             margin: 0 auto 15px;
             border: 2px dashed var(--primary-color);
-            border-radius: 8px;
+            border-radius: var(--border-radius-large);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -150,15 +222,17 @@
 
         .info-card {
             background-color: var(--light-gray);
-            padding: 10px;
-            border-radius: 4px;
+            padding: var(--spacing-medium);
+            border-radius: var(--border-radius-medium);
+            border: 1px solid rgba(233, 30, 99, 0.1);
         }
 
         .tracking-form {
             background-color: var(--light-gray);
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
+            padding: var(--spacing-large);
+            border-radius: var(--border-radius-large);
+            margin-top: var(--spacing-large);
+            border: 1px solid rgba(233, 30, 99, 0.1);
         }
 
         .form-group {
@@ -175,17 +249,21 @@
         }
 
         button {
-            background-color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: var(--white);
-            padding: 10px 20px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 4px;
+            border-radius: var(--border-radius-medium);
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
+            font-family: var(--font-family);
+            font-weight: 500;
+            letter-spacing: 0.5px;
         }
 
         button:hover {
-            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.2);
         }
 
         .history {
@@ -211,16 +289,22 @@
         }
 
         .progress-bar {
-            height: 5px;
-            background-color: #ddd;
-            border-radius: 5px;
-            margin-top: 10px;
+            height: 6px;
+            background-color: rgba(233, 30, 99, 0.1);
+            border-radius: 3px;
+            margin-top: var(--spacing-small);
+            overflow: hidden;
         }
 
         .progress {
             height: 100%;
-            background-color: var(--primary-color);
-            border-radius: 5px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .exercise.completed-today .progress {
+            background: linear-gradient(135deg, var(--success), #66BB6A);
         }
 
         .error {
@@ -454,8 +538,8 @@
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             padding: 20px 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border-radius: var(--border-radius-large);
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
             z-index: 9999;
             opacity: 0;
             transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -475,9 +559,9 @@
         }
 
         .notification-content {
-            font-size: 20px;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+            font-size: var(--subheading-size);
+            font-weight: 500;
+            letter-spacing: 0.5px;
             position: relative;
             overflow: hidden;
             padding: 10px;
@@ -520,6 +604,50 @@
                 font-size: 16px;
             }
         }
+
+        .header-buttons {
+            display: flex;
+            gap: var(--spacing-small);
+            margin-top: var(--spacing-medium);
+        }
+
+        .reset-button {
+            background: linear-gradient(135deg, #F48FB1, #E91E63);
+        }
+
+        .reset-button:hover {
+            background: linear-gradient(135deg, #E91E63, #C2185B);
+        }
+
+        h2 {
+            font-size: var(--subheading-size);
+        }
+
+        /* Aggiungi stili per il tema scuro */
+        body.dark .header {
+            background-color: var(--secondary-color);
+        }
+
+        body.dark .exercise {
+            background-color: #1E1E1E;
+            color: #FFFFFF;
+        }
+
+        body.dark .info-card {
+            background-color: #2D2D2D;
+        }
+
+        body.dark .tracking-form {
+            background-color: #2D2D2D;
+        }
+
+        body.dark .history {
+            background-color: #2D2D2D;
+        }
+
+        body.dark .photo-history {
+            background-color: #1E1E1E;
+        }
     </style>
 </head>
 <body>
@@ -528,6 +656,9 @@
             <div class="client-info">
                 <h1 id="client-name">Nome Cliente</h1>
                 <div id="workout-date">Data Allenamento</div>
+            </div>
+            <div class="header-buttons">
+                <button onclick="resetWorkout()" class="reset-button">🔄 Resetta Configurazione</button>
             </div>
         </div>
 
