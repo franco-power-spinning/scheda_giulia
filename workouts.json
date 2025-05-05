@@ -1,0 +1,50 @@
+{
+    "workouts": [
+        {
+            "id": "workout-a",
+            "name": "spalle",
+            "description": "Allenamento per la parte superiore del corpo",
+            "exercises": [
+                {
+                    "id": 1,
+                    "name": "Panca Piana",
+                    "sets": 4,
+                    "repetitions": 12,
+                    "restTime": "90 secondi",
+                    "notes": "Mantenere la schiena aderente alla panca"
+                },
+                {
+                    "id": 2,
+                    "name": "Trazioni",
+                    "sets": 3,
+                    "repetitions": 8,
+                    "restTime": "120 secondi",
+                    "notes": "Mantenere il corpo dritto"
+                }
+            ]
+        },
+        {
+            "id": "workout-b",
+            "name": "Allenamento B",
+            "description": "Allenamento per la parte inferiore del corpo",
+            "exercises": [
+                {
+                    "id": 3,
+                    "name": "Squat",
+                    "sets": 4,
+                    "repetitions": 10,
+                    "restTime": "120 secondi",
+                    "notes": "Mantenere la schiena dritta"
+                },
+                {
+                    "id": 4,
+                    "name": "Affondi",
+                    "sets": 3,
+                    "repetitions": 12,
+                    "restTime": "90 secondi",
+                    "notes": "Controllare la discesa"
+                }
+            ]
+        }
+    ]
+} 

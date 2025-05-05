@@ -1,0 +1,30 @@
+{
+    "client": {
+        "name": "Nome Cliente",
+        "id": "CL001"
+    },
+    "workout": {
+        "name": "Spalle",
+        "date": "2024-03-20",
+        "exercises": [
+            {
+                "id": 1,
+                "name": "Panca Piana",
+                "image": "images/panca_piana.jpg",
+                "sets": 4,
+                "repetitions": 12,
+                "restTime": "90 secondi",
+                "notes": "Mantenere la schiena aderente alla panca"
+            },
+            {
+                "id": 2,
+                "name": "Squat",
+                "image": "images/squat.jpg",
+                "sets": 4,
+                "repetitions": 10,
+                "restTime": "120 secondi",
+                "notes": "Mantenere la schiena dritta"
+            }
+        ]
+    }
+} 
