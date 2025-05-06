@@ -286,6 +286,7 @@ function loadWorkoutExercises(workoutId) {
     workout.exercises.forEach(exercise => {
         const exerciseElement = document.createElement('div');
         exerciseElement.className = 'exercise';
+        exerciseElement.id = `exercise-${exercise.id}`;
         
         // Controlla se l'esercizio è stato completato oggi
         const history = JSON.parse(localStorage.getItem(`exercise-${exercise.id}`) || '[]');
@@ -299,13 +300,10 @@ function loadWorkoutExercises(workoutId) {
         exerciseElement.innerHTML = `
             <div class="exercise-header">
                 <h2>${exercise.name}</h2>
-                <div class="progress-bar">
-                    <div class="progress" style="width: 0%"></div>
-                </div>
             </div>
             <div class="exercise-photo" id="exercise-photo-${exercise.id}">
                 <div class="photo-placeholder">
-                    <p>+ Clicca per aggiungere foto</p>
+                    <p>+ Clicca per aggiungere foto dell'esercizio</p>
                 </div>
                 <div class="photo-options">
                     <button onclick="capturePhoto('exercise-photo-input-${exercise.id}')">Scatta</button>
@@ -339,18 +337,22 @@ function loadWorkoutExercises(workoutId) {
                 <h3>Storico</h3>
                 <ul class="history-list"></ul>
             </div>
+            
         `;
         
         container.appendChild(exerciseElement);
         
-        // Add event listener for exercise photo input
+        // Carica la foto dell'esercizio se esiste
+        loadExercisePhoto(exercise.id);
+        
+        // Carica lo storico
+        loadExerciseHistory(exercise.id);
+        
+        // Aggiungi event listener per il caricamento della foto dell'esercizio
         const exercisePhotoInput = document.getElementById(`exercise-photo-input-${exercise.id}`);
         exercisePhotoInput.addEventListener('change', (event) => {
-            handlePhotoInput(event, `exercise-photo-${exercise.id}`, workoutId);
+            handleExercisePhotoUpload(event, exercise.id);
         });
-        
-        loadExerciseHistory(exercise.id);
-        loadExercisePhoto(exercise.id);
     });
 }
 
@@ -516,16 +518,110 @@ function uploadPhoto(inputId) {
 
 // Function to load exercise photo
 function loadExercisePhoto(exerciseId) {
-    const savedPhoto = localStorage.getItem(`exercise-photo-${exerciseId}`);
-    if (savedPhoto) {
-        const container = document.getElementById(`exercise-photo-${exerciseId}`);
-        container.innerHTML = `
-            <img src="${savedPhoto}" alt="Foto esercizio">
-            <div class="photo-options">
-                <button onclick="capturePhoto('exercise-photo-input-${exerciseId}')">Scatta</button>
-                <button onclick="uploadPhoto('exercise-photo-input-${exerciseId}')">Carica</button>
+    const exercisePhotos = JSON.parse(localStorage.getItem('exercisePhotos') || '{}');
+    const photoData = exercisePhotos[exerciseId];
+    if (photoData) {
+        const exercisePhoto = document.querySelector(`#exercise-photo-${exerciseId}`);
+        if (exercisePhoto) {
+            exercisePhoto.innerHTML = `
+                <img src="${photoData}" alt="Foto esercizio">
+                <div class="photo-options">
+                    <button onclick="capturePhoto('exercise-photo-input-${exerciseId}')">Scatta</button>
+                    <button onclick="uploadPhoto('exercise-photo-input-${exerciseId}')">Carica</button>
+                </div>
+            `;
+        }
+    }
+}
+
+// Funzione per gestire il caricamento delle foto degli esercizi
+function handleExercisePhotoUpload(event, exerciseId) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const exercisePhoto = document.querySelector(`#exercise-photo-${exerciseId}`);
+            if (exercisePhoto) {
+                exercisePhoto.innerHTML = `
+                    <img src="${e.target.result}" alt="Foto esercizio">
+                    <div class="photo-options">
+                        <button onclick="capturePhoto('exercise-photo-input-${exerciseId}')">Scatta</button>
+                        <button onclick="uploadPhoto('exercise-photo-input-${exerciseId}')">Carica</button>
+                    </div>
+                `;
+            }
+            // Salva la foto dell'esercizio separatamente
+            saveExercisePhoto(exerciseId, e.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// Funzione per salvare la foto dell'esercizio
+function saveExercisePhoto(exerciseId, photoData) {
+    const exercisePhotos = JSON.parse(localStorage.getItem('exercisePhotos') || '{}');
+    exercisePhotos[exerciseId] = photoData;
+    localStorage.setItem('exercisePhotos', JSON.stringify(exercisePhotos));
+}
+
+// Funzione per gestire il caricamento delle foto di progresso
+function handleProgressPhotoUpload(event, exerciseId) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const comment = prompt("Inserisci un commento per questa foto di progresso:");
+            if (comment !== null) {
+                const photoData = {
+                    url: e.target.result,
+                    date: new Date().toISOString(),
+                    comment: comment
+                };
+                saveProgressPhoto(exerciseId, photoData);
+                updateProgressPhotoGallery(exerciseId);
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+// Funzione per salvare la foto di progresso
+function saveProgressPhoto(exerciseId, photoData) {
+    const progressPhotos = JSON.parse(localStorage.getItem('progressPhotos') || '{}');
+    if (!progressPhotos[exerciseId]) {
+        progressPhotos[exerciseId] = [];
+    }
+    progressPhotos[exerciseId].push(photoData);
+    localStorage.setItem('progressPhotos', JSON.stringify(progressPhotos));
+}
+
+// Funzione per aggiornare la galleria delle foto di progresso
+function updateProgressPhotoGallery(exerciseId) {
+    const progressPhotos = JSON.parse(localStorage.getItem('progressPhotos') || '{}');
+    const photos = progressPhotos[exerciseId] || [];
+    const gallery = document.querySelector(`#progress-gallery-${exerciseId}`);
+    
+    if (gallery) {
+        gallery.innerHTML = photos.map((photo, index) => `
+            <div class="photo-item">
+                <img src="${photo.url}" alt="Foto progresso" onclick="showPhotoModal('${photo.url}', '${photo.comment}')">
+                <div class="photo-date">${new Date(photo.date).toLocaleDateString()}</div>
+                <div class="photo-comment">${photo.comment}</div>
+                <div class="photo-actions">
+                    <button onclick="deleteProgressPhoto('${exerciseId}', ${index})">Elimina</button>
+                </div>
             </div>
-        `;
+        `).join('');
+    }
+}
+
+// Funzione per eliminare una foto di progresso
+function deleteProgressPhoto(exerciseId, index) {
+    const progressPhotos = JSON.parse(localStorage.getItem('progressPhotos') || '{}');
+    if (progressPhotos[exerciseId]) {
+        progressPhotos[exerciseId].splice(index, 1);
+        localStorage.setItem('progressPhotos', JSON.stringify(progressPhotos));
+        updateProgressPhotoGallery(exerciseId);
     }
 }
 
@@ -629,7 +725,7 @@ function loadExerciseHistory(exerciseId) {
     const totalSets = parseInt(historyContainer.closest('.exercise').querySelector('.info-card').textContent.match(/\d+/)[0]);
     const completedSets = history.length;
     const progress = (completedSets / totalSets) * 100;
-    progressBar.style.width = `${progress}%`;
+
 }
 
 // Function to add data management buttons
@@ -680,52 +776,40 @@ function addDataManagementButtons() {
 function saveWorkoutData() {
     const data = {
         workouts: workoutData.workouts,
-        history: {},
-        photos: {},
-        lastUpdated: new Date().toISOString()
+        exercisePhotos: JSON.parse(localStorage.getItem('exercisePhotos') || '{}'),
+        exerciseHistory: {},
+        workoutPhotos: {}
     };
 
-    // Save exercise history
+    // Salva le foto dei workout
+    workoutData.workouts.forEach(workout => {
+        const photos = localStorage.getItem(`workout-photos-${workout.id}`);
+        if (photos) {
+            data.workoutPhotos[workout.id] = JSON.parse(photos);
+        }
+    });
+
+    // Salva anche la cronologia degli esercizi
     workoutData.workouts.forEach(workout => {
         workout.exercises.forEach(exercise => {
             const history = JSON.parse(localStorage.getItem(`exercise-${exercise.id}`) || '[]');
             if (history.length > 0) {
-                data.history[`exercise-${exercise.id}`] = history;
-            }
-            
-            // Save exercise photos
-            const exercisePhoto = localStorage.getItem(`exercise-photo-${exercise.id}`);
-            if (exercisePhoto) {
-                data.photos[`exercise-photo-${exercise.id}`] = exercisePhoto;
+                data.exerciseHistory[`exercise-${exercise.id}`] = history;
             }
         });
     });
-
-    // Save workout photos
-    workoutData.workouts.forEach(workout => {
-        const photos = JSON.parse(localStorage.getItem(`workout-photos-${workout.id}`) || '[]');
-        if (photos.length > 0) {
-            data.history[`workout-photos-${workout.id}`] = photos;
-        }
-    });
-
-    // Create and download JSON file
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    
+    console.log('Saving workout data:', data);
+    
+    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `workout_data_${new Date().toISOString().split('T')[0]}.json`;
-    
-    // Add event listener to clean up after download
-    a.addEventListener('click', () => {
-        setTimeout(() => {
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }, 100);
-    });
-    
+    a.download = 'workout_data.json';
     document.body.appendChild(a);
     a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 // Function to load workout data from file
@@ -734,54 +818,56 @@ function loadWorkoutDataFromFile(file) {
     reader.onload = function(e) {
         try {
             const data = JSON.parse(e.target.result);
+            console.log('Loading workout data:', data);
             
-            // Verify data structure
-            if (!data.workouts || !data.history) {
-                throw new Error('Formato file non valido');
+            // Aggiorna i workout
+            workoutData.workouts = data.workouts;
+            
+            // Salva le foto degli esercizi
+            if (data.exercisePhotos) {
+                localStorage.setItem('exercisePhotos', JSON.stringify(data.exercisePhotos));
             }
-            
-            // Load exercise history
-            Object.entries(data.history).forEach(([key, value]) => {
-                if (key.startsWith('exercise-')) {
-                    localStorage.setItem(key, JSON.stringify(value));
-                } else if (key.startsWith('workout-photos-')) {
-                    localStorage.setItem(key, JSON.stringify(value));
-                }
-            });
 
-            // Load photos
-            if (data.photos) {
-                Object.entries(data.photos).forEach(([key, value]) => {
-                    localStorage.setItem(key, value);
+            // Salva le foto dei workout
+            if (data.workoutPhotos) {
+                Object.entries(data.workoutPhotos).forEach(([workoutId, photos]) => {
+                    localStorage.setItem(`workout-photos-${workoutId}`, JSON.stringify(photos));
                 });
             }
 
-            // Update UI
-            workoutData.workouts.forEach(workout => {
-                loadWorkoutExercises(workout.id);
-                loadWorkoutPhoto(workout.id);
-            });
-
-            // Show success message
-            const successMessage = document.createElement('div');
-            successMessage.textContent = 'Dati caricati con successo!';
-            successMessage.style.position = 'fixed';
-            successMessage.style.bottom = '20px';
-            successMessage.style.left = '50%';
-            successMessage.style.transform = 'translateX(-50%)';
-            successMessage.style.backgroundColor = 'var(--primary-color)';
-            successMessage.style.color = 'white';
-            successMessage.style.padding = '10px 20px';
-            successMessage.style.borderRadius = '5px';
-            successMessage.style.zIndex = '1000';
-            document.body.appendChild(successMessage);
+            // Salva la cronologia degli esercizi
+            if (data.exerciseHistory) {
+                Object.entries(data.exerciseHistory).forEach(([key, value]) => {
+                    localStorage.setItem(key, JSON.stringify(value));
+                });
+            }
+            
+            // Ricarica l'interfaccia
+            loadWorkoutData();
+            
+            // Mostra un messaggio di successo
+            const notification = document.createElement('div');
+            notification.className = 'motivational-notification';
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <p>✅ Dati caricati con successo!</p>
+                </div>
+            `;
+            document.body.appendChild(notification);
             
             setTimeout(() => {
-                document.body.removeChild(successMessage);
+                notification.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 500);
             }, 3000);
         } catch (error) {
-            console.error('Error loading data:', error);
-            alert('Errore nel caricamento dei dati: ' + error.message);
+            console.error('Errore nel caricamento dei dati:', error);
+            alert('Errore nel caricamento dei dati. Il file potrebbe essere corrotto.');
         }
     };
     reader.readAsText(file);
@@ -790,50 +876,7 @@ function loadWorkoutDataFromFile(file) {
 // Funzione per resettare la configurazione del workout
 function resetWorkout() {
     if (confirm('Sei sicuro di voler resettare la configurazione? Tutti i dati verranno eliminati.')) {
-        // Resetta i dati del workout
-        workoutData = {
-            "client": {
-                "name": "Giulia Grisanti",
-                "startDate": new Date().toISOString().split('T')[0]
-            },
-            "style": {
-                "theme": "light",
-                "colors": {
-                    "primary": "#2196F3",
-                    "secondary": "#1976D2",
-                    "accent": "#FFC107",
-                    "text": "#333333",
-                    "background": "#f5f5f5",
-                    "surface": "#ffffff",
-                    "error": "#f44336",
-                    "success": "#4CAF50"
-                },
-                "typography": {
-                    "fontFamily": "'Roboto', sans-serif",
-                    "baseSize": "16px",
-                    "headingSize": "24px",
-                    "subheadingSize": "20px"
-                },
-                "spacing": {
-                    "small": "8px",
-                    "medium": "16px",
-                    "large": "24px"
-                },
-                "borderRadius": {
-                    "small": "4px",
-                    "medium": "8px",
-                    "large": "15px"
-                }
-            },
-            "workouts": [
-                {
-                    "id": "workout-a",
-                    "name": "Allenamento A",
-                    "description": "Allenamento per la parte superiore del corpo",
-                    "exercises": []
-                }
-            ]
-        };
+
 
         // Pulisci il localStorage
         localStorage.clear();
