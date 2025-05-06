@@ -1,8 +1,7 @@
 let currentWorkout = null;
 let workoutData = {
     "client": {
-        "name": "Giulia",
-        "startDate": "2024-03-20"
+        "name": "Giulia Grisanti",
     },
     "style": {
         "theme": "light",
@@ -36,7 +35,7 @@ let workoutData = {
     "workouts": [
         {
             "id": "workout-a",
-            "name": "Allenamento A",
+            "name": "Dorso e Spalle",
             "description": "Allenamento per la parte superiore del corpo",
             "exercises": [
                 {
@@ -159,7 +158,7 @@ function loadWorkoutData() {
             month: '2-digit',
             year: 'numeric'
         });
-        document.getElementById('workout-date').textContent = `Inizio allenamento: ${formattedDate}`;
+       
         
         // Applica gli stili
         applyStyles();
@@ -794,7 +793,7 @@ function resetWorkout() {
         // Resetta i dati del workout
         workoutData = {
             "client": {
-                "name": "Giulia",
+                "name": "Giulia Grisanti",
                 "startDate": new Date().toISOString().split('T')[0]
             },
             "style": {
@@ -929,6 +928,48 @@ function toggleTheme() {
     applyStyles();
     saveWorkoutData();
 }
+
+// Funzione per mostrare/nascondere il menu di gestione dati
+function toggleDataManagement(event) {
+    if (event) {
+        event.stopPropagation();
+    }
+    
+    const menu = document.getElementById('data-management');
+    const isVisible = menu.classList.contains('show');
+    
+    // Chiudi tutti i menu aperti
+    document.querySelectorAll('.data-management.show').forEach(m => {
+        m.classList.remove('show');
+    });
+    
+    // Se il menu non era visibile, mostralo
+    if (!isVisible) {
+        menu.classList.add('show');
+        
+        // Chiudi il menu quando si clicca fuori
+        setTimeout(() => {
+            document.addEventListener('click', function closeMenu(e) {
+                if (!menu.contains(e.target) && !e.target.classList.contains('gear-button')) {
+                    menu.classList.remove('show');
+                    document.removeEventListener('click', closeMenu);
+                }
+            });
+        }, 0);
+    }
+}
+
+// Chiudi il menu quando si clicca su un pulsante del menu
+document.addEventListener('DOMContentLoaded', () => {
+    const menuButtons = document.querySelectorAll('.data-management button');
+    menuButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            setTimeout(() => {
+                document.getElementById('data-management').classList.remove('show');
+            }, 100);
+        });
+    });
+});
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', () => {

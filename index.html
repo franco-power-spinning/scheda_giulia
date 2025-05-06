@@ -52,12 +52,42 @@
         }
 
         .header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            position: relative;
             color: var(--white);
             padding: var(--spacing-large);
             border-radius: var(--border-radius-large);
             margin-bottom: var(--spacing-large);
             box-shadow: 0 4px 15px rgba(233, 30, 99, 0.2);
+            min-height: 300px;
+            overflow: visible;
+        }
+
+        .header-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center 30%;
+            z-index: 1;
+        }
+
+        .header-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 0, 0, 0.3), rgba(139, 0, 0, 0.3));
+            z-index: 2;
+            border-radius: var(--border-radius-large);
+        }
+
+        .client-info {
+            position: relative;
+            z-index: 3;
+            padding-top: 40px;
         }
 
         .header h1 {
@@ -67,11 +97,16 @@
             margin-bottom: var(--spacing-small);
         }
 
-        .client-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .client-info h1 {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+            color: #fff;
+            font-size: 42px;
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            letter-spacing: 1px;
             margin-bottom: 20px;
+            text-transform: capitalize;
         }
 
         .photo-section {
@@ -652,9 +687,81 @@
         }
 
         .header-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .gear-button {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             display: flex;
-            gap: var(--spacing-small);
-            margin-top: var(--spacing-medium);
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 20px;
+            border: none;
+            box-shadow: 0 2px 8px rgba(233, 30, 99, 0.2);
+            z-index: 100;
+        }
+
+        .gear-button:hover {
+            transform: rotate(45deg);
+            box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+        }
+
+        .data-management {
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background: white;
+            padding: 15px;
+            border-radius: var(--border-radius-medium);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+            min-width: 200px;
+            border: 1px solid rgba(233, 30, 99, 0.1);
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .data-management.show {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .data-management button {
+            width: 100%;
+            text-align: left;
+            padding: 12px 15px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-medium);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .data-management button:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(233, 30, 99, 0.2);
+        }
+
+        .data-management button i {
+            font-size: 18px;
         }
 
         .reset-button {
@@ -699,12 +806,25 @@
 <body>
     <div class="container">
         <div class="header">
+            <img src="./images/banner.png" alt="Banner" class="header-bg">
+            <div class="header-overlay"></div>
             <div class="client-info">
                 <h1 id="client-name">Nome Cliente</h1>
-                <div id="workout-date">Data Allenamento</div>
             </div>
             <div class="header-buttons">
-                <button onclick="resetWorkout()" class="reset-button">🔄 Resetta Configurazione</button>
+                <button class="gear-button" onclick="toggleDataManagement()">⚙️</button>
+                <div class="data-management" id="data-management">
+                    <button onclick="saveWorkoutData()">
+                        <i>📥</i> Esporta Dati
+                    </button>
+                    <button onclick="document.getElementById('import-input').click()">
+                        <i>📤</i> Importa Dati
+                    </button>
+                    <button onclick="resetWorkout()" class="reset-button">
+                        <i>🔄</i> Resetta Configurazione
+                    </button>
+                    <input type="file" id="import-input" accept=".json" style="display: none" onchange="loadWorkoutDataFromFile(this.files[0])">
+                </div>
             </div>
         </div>
 
