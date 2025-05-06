@@ -35,95 +35,72 @@ let workoutData = {
     "workouts": [
         {
             "id": "workout-a",
-            "name": "Dorso e Spalle",
+            "name": "💪 Dorso e Spalle",
             "description": "Allenamento per la parte superiore del corpo",
             "exercises": [
                 {
                     "id": 1,
-                    "name": "Pulldown alla Lat machine",
+                    "name": "💪 Pulldown alla Lat machine",
                     "sets": 3,
                     "repetitions": 8,
-                    "restTime": "60 secondi",
-                    "notes": "Mantenere la schiena dritta e controllare la fase eccentrica"
+                    "restTime": "⏱️ 60 secondi",
+                    "notes": "📝 Mantenere la schiena dritta e controllare la fase eccentrica"
                 },
                 {
                     "id": 2,
-                    "name": "Rematore Bilanciere",
+                    "name": "💪 Rematore Bilanciere",
                     "sets": 3,
                     "repetitions": 8,
-                    "restTime": "60 secondi",
-                    "notes": "Mantenere la schiena dritta e le spalle basse"
+                    "restTime": "⏱️ 60 secondi",
+                    "notes": "📝 Mantenere la schiena dritta e le spalle basse"
                 },
                 {
                     "id": 3,
-                    "name": "Pulley",
+                    "name": "💪 Pulley",
                     "sets": 3,
                     "repetitions": 8,
-                    "restTime": "60 secondi",
-                    "notes": "Controllare il movimento e mantenere la postura corretta"
+                    "restTime": "⏱️ 60 secondi",
+                    "notes": "📝 Controllare il movimento e mantenere la postura corretta"
                 },
                 {
                     "id": 4,
-                    "name": "Rematore con manubrio",
+                    "name": "💪 Rematore con manubrio",
                     "sets": 3,
                     "repetitions": 8,
-                    "restTime": "60 secondi",
-                    "notes": "Mantenere il gomito vicino al corpo"
+                    "restTime": "⏱️ 60 secondi",
+                    "notes": "📝 Mantenere il gomito vicino al corpo"
                 },
                 {
                     "id": 5,
-                    "name": "Military press",
+                    "name": "💪 Military press",
                     "sets": 3,
                     "repetitions": 8,
-                    "restTime": "60 secondi",
-                    "notes": "Mantenere il core attivo e controllare il movimento"
+                    "restTime": "⏱️ 60 secondi",
+                    "notes": "📝 Mantenere il core attivo e controllare il movimento"
                 },
                 {
                     "id": 6,
-                    "name": "Alzate laterali con manubrio sdraiati su panca inclinata",
+                    "name": "💪 Alzate laterali con Cavi",
                     "sets": 3,
                     "repetitions": 8,
-                    "restTime": "60 secondi",
-                    "notes": "3 serie per lato, mantenere il controllo del movimento"
+                    "restTime": "⏱️ 60 secondi",
+                    "notes": "📝 3 serie per lato, mantenere il controllo del movimento"
                 },
                 {
                     "id": 7,
-                    "name": "Alzate con manubri con busto appoggiato su panca inclinata",
+                    "name": "💪 Alzate con manubri con busto appoggiato su panca inclinata",
                     "sets": 3,
                     "repetitions": 8,
-                    "restTime": "60 secondi",
-                    "notes": "Mantenere la postura corretta e controllare il movimento"
+                    "restTime": "⏱️ 60 secondi",
+                    "notes": "📝 Mantenere la postura corretta e controllare il movimento"
                 },
                 {
                     "id": 8,
-                    "name": "Tirate al mento (bilancere piccolo)",
+                    "name": "💪 Tirate al mento (bilancere piccolo)",
                     "sets": 3,
                     "repetitions": 8,
-                    "restTime": "60 secondi",
-                    "notes": "Mantenere i gomiti alti e controllare il movimento"
-                }
-            ]
-        },
-        {
-            "id": "workout-b",
-            "name": "Allenamento B",
-            "description": "Allenamento per la parte inferiore del corpo",
-            "exercises": [
-                {
-                    "id": 3,
-                    "name": "Squat",
-                    "sets": 4,
-                    "repetitions": 10,
-                    "restTime": "120 secondi",
-                    "notes": "Mantenere la schiena dritta"
-                },
-                {
-                    "id": 4,
-                    "name": "Affondi",
-                    "sets": 3,
-                    "repetitions": 12,
-                    "restTime": "90 secondi",
-                    "notes": "Controllare la discesa"
+                    "restTime": "⏱️ 60 secondi",
+                    "notes": "📝 Mantenere i gomiti alti e controllare il movimento"
                 }
             ]
         }
